@@ -1,6 +1,6 @@
 {
   "name": "@altalune/svelte-adapter-serverless",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Adapter for SvelteKit apps that generates a serverless handler",
   "repository": {
     "type": "git",
