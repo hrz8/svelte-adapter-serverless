@@ -6,6 +6,9 @@
     "type": "git",
     "url": "https://github.com/hrz8/svelte-adapter-serverless"
   },
+  "engines": {
+    "node": ">=20.0.0"
+  },
   "license": "MIT",
   "type": "module",
   "exports": {
