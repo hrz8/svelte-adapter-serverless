@@ -22,9 +22,9 @@ const port_header = env('PORT_HEADER', '').toLowerCase();
 const body_size_limit = Number(env('BODY_SIZE_LIMIT', '524288'));
 
 if (isNaN(body_size_limit)) {
-	throw new Error(
-		`Invalid BODY_SIZE_LIMIT: '${env('BODY_SIZE_LIMIT')}'. Please provide a numeric value.`
-	);
+  throw new Error(
+    `Invalid BODY_SIZE_LIMIT: '${env('BODY_SIZE_LIMIT')}'. Please provide a numeric value.`
+  );
 }
 
 const dir = path.dirname(fileURLToPath(import.meta.url));
@@ -32,8 +32,8 @@ const dir = path.dirname(fileURLToPath(import.meta.url));
 const asset_dir = `${dir}/client${base}`;
 
 await server.init({
-	env: process.env,
-	read: (file) => createReadableStream(`${asset_dir}/${file}`)
+  env: process.env,
+  read: (file) => createReadableStream(`${asset_dir}/${file}`)
 });
 
 /**
@@ -41,137 +41,137 @@ await server.init({
  * @param {boolean} client
  */
 function serve(path, client = false) {
-	return (
-		fs.existsSync(path) &&
-		sirv(path, {
-			etag: true,
-			gzip: true,
-			brotli: true,
-			setHeaders:
-				client &&
-				((res, pathname) => {
-					// only apply to build directory, not e.g. version.json
-					if (pathname.startsWith(`/${manifest.appPath}/immutable/`) && res.statusCode === 200) {
-						res.setHeader('cache-control', 'public,max-age=31536000,immutable');
-					}
-				})
-		})
-	);
+  return (
+    fs.existsSync(path) &&
+    sirv(path, {
+      etag: true,
+      gzip: true,
+      brotli: true,
+      setHeaders:
+        client &&
+        ((res, pathname) => {
+          // only apply to build directory, not e.g. version.json
+          if (pathname.startsWith(`/${manifest.appPath}/immutable/`) && res.statusCode === 200) {
+            res.setHeader('cache-control', 'public,max-age=31536000,immutable');
+          }
+        })
+    })
+  );
 }
 
 // required because the static file server ignores trailing slashes
 /** @returns {import('polka').Middleware} */
 function serve_prerendered() {
-	const handler = serve(path.join(dir, 'prerendered'));
+  const handler = serve(path.join(dir, 'prerendered'));
 
-	return (req, res, next) => {
-		let { pathname, search, query } = polka_url_parser(req);
+  return (req, res, next) => {
+    let { pathname, search, query } = polka_url_parser(req);
 
-		try {
-			pathname = decodeURIComponent(pathname);
-		} catch {
-			// ignore invalid URI
-		}
+    try {
+      pathname = decodeURIComponent(pathname);
+    } catch {
+      // ignore invalid URI
+    }
 
-		if (prerendered.has(pathname)) {
-			return handler(req, res, next);
-		}
+    if (prerendered.has(pathname)) {
+      return handler(req, res, next);
+    }
 
-		// remove or add trailing slash as appropriate
-		let location = pathname.at(-1) === '/' ? pathname.slice(0, -1) : pathname + '/';
-		if (prerendered.has(location)) {
-			if (query) location += search;
-			res.writeHead(308, { location }).end();
-		} else {
-			next();
-		}
-	};
+    // remove or add trailing slash as appropriate
+    let location = pathname.at(-1) === '/' ? pathname.slice(0, -1) : pathname + '/';
+    if (prerendered.has(location)) {
+      if (query) location += search;
+      res.writeHead(308, { location }).end();
+    } else {
+      next();
+    }
+  };
 }
 
 /** @type {import('polka').Middleware} */
 const ssr = async (req, res) => {
-	/** @type {Request} */
-	let request;
+  /** @type {Request} */
+  let request;
 
-	try {
-		request = await getRequest({
-			base: origin || get_origin(req.headers),
-			request: req,
-			bodySizeLimit: body_size_limit
-		});
-	} catch {
-		res.statusCode = 400;
-		res.end('Bad Request');
-		return;
-	}
+  try {
+    request = await getRequest({
+      base: origin || get_origin(req.headers),
+      request: req,
+      bodySizeLimit: body_size_limit
+    });
+  } catch {
+    res.statusCode = 400;
+    res.end('Bad Request');
+    return;
+  }
 
-	setResponse(
-		res,
-		await server.respond(request, {
-			platform: { req },
-			getClientAddress: () => {
-				if (address_header) {
-					if (!(address_header in req.headers)) {
-						throw new Error(
-							`Address header was specified with ${
-								ENV_PREFIX + 'ADDRESS_HEADER'
-							}=${address_header} but is absent from request`
-						);
-					}
+  setResponse(
+    res,
+    await server.respond(request, {
+      platform: { req },
+      getClientAddress: () => {
+        if (address_header) {
+          if (!(address_header in req.headers)) {
+            throw new Error(
+              `Address header was specified with ${
+                ENV_PREFIX + 'ADDRESS_HEADER'
+              }=${address_header} but is absent from request`
+            );
+          }
 
-					const value = /** @type {string} */ (req.headers[address_header]) || '';
+          const value = /** @type {string} */ (req.headers[address_header]) || '';
 
-					if (address_header === 'x-forwarded-for') {
-						const addresses = value.split(',');
+          if (address_header === 'x-forwarded-for') {
+            const addresses = value.split(',');
 
-						if (xff_depth < 1) {
-							throw new Error(`${ENV_PREFIX + 'XFF_DEPTH'} must be a positive integer`);
-						}
+            if (xff_depth < 1) {
+              throw new Error(`${ENV_PREFIX + 'XFF_DEPTH'} must be a positive integer`);
+            }
 
-						if (xff_depth > addresses.length) {
-							throw new Error(
-								`${ENV_PREFIX + 'XFF_DEPTH'} is ${xff_depth}, but only found ${
-									addresses.length
-								} addresses`
-							);
-						}
-						return addresses[addresses.length - xff_depth].trim();
-					}
+            if (xff_depth > addresses.length) {
+              throw new Error(
+                `${ENV_PREFIX + 'XFF_DEPTH'} is ${xff_depth}, but only found ${
+                  addresses.length
+                } addresses`
+              );
+            }
+            return addresses[addresses.length - xff_depth].trim();
+          }
 
-					return value;
-				}
+          return value;
+        }
 
-				return (
-					req.connection?.remoteAddress ||
-					// @ts-expect-error
-					req.connection?.socket?.remoteAddress ||
-					req.socket?.remoteAddress ||
-					// @ts-expect-error
-					req.info?.remoteAddress
-				);
-			}
-		})
-	);
+        return (
+          req.connection?.remoteAddress ||
+          // @ts-expect-error
+          req.connection?.socket?.remoteAddress ||
+          req.socket?.remoteAddress ||
+          // @ts-expect-error
+          req.info?.remoteAddress
+        );
+      }
+    })
+  );
 };
 
 /** @param {import('polka').Middleware[]} handlers */
 function sequence(handlers) {
-	/** @type {import('polka').Middleware} */
-	return (req, res, next) => {
-		/**
-		 * @param {number} i
-		 * @returns {ReturnType<import('polka').Middleware>}
-		 */
-		function handle(i) {
-			if (i < handlers.length) {
-				return handlers[i](req, res, () => handle(i + 1));
-			} else {
-				return next();
-			}
-		}
+  /** @type {import('polka').Middleware} */
+  return (req, res, next) => {
+    /**
+     * @param {number} i
+     * @returns {ReturnType<import('polka').Middleware>}
+     */
+    function handle(i) {
+      if (i < handlers.length) {
+        return handlers[i](req, res, () => handle(i + 1));
+      } else {
+        return next();
+      }
+    }
 
-		return handle(0);
-	};
+    return handle(0);
+  };
 }
 
 /**
@@ -179,21 +179,21 @@ function sequence(handlers) {
  * @returns
  */
 function get_origin(headers) {
-	const protocol = (protocol_header && headers[protocol_header]) || 'https';
-	const host = headers[host_header];
-	const port = port_header && headers[port_header];
-	if (port) {
-		return `${protocol}://${host}:${port}`;
-	} else {
-		return `${protocol}://${host}`;
-	}
+  const protocol = (protocol_header && headers[protocol_header]) || 'https';
+  const host = headers[host_header];
+  const port = port_header && headers[port_header];
+  if (port) {
+    return `${protocol}://${host}:${port}`;
+  } else {
+    return `${protocol}://${host}`;
+  }
 }
 
 export const handler = sequence(
-	[
-		serve(path.join(dir, 'client'), true),
-		serve(path.join(dir, 'static')),
-		serve_prerendered(),
-		ssr
-	].filter(Boolean)
+  [
+    serve(path.join(dir, 'client'), true),
+    serve(path.join(dir, 'static')),
+    serve_prerendered(),
+    ssr
+  ].filter(Boolean)
 );

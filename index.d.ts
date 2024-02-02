@@ -9,6 +9,7 @@ interface AdapterOptions {
   out?: string;
   precompress?: boolean;
   envPrefix?: string;
+  serverlessAdapter?: 'node' | 'digital_ocean'
 }
 
 export default function plugin(options?: AdapterOptions): Adapter;

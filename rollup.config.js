@@ -3,16 +3,18 @@ import commonjs from '@rollup/plugin-commonjs';
 import json from '@rollup/plugin-json';
 import { builtinModules } from 'node:module';
 
-export default [
-  {
-    input: 'src/index.js',
-    output: {
-      file: 'files/index.js',
-      format: 'esm'
-    },
-    plugins: [nodeResolve({ preferBuiltins: true }), commonjs(), json()],
-    external: ['ENV', 'HANDLER', ...builtinModules]
+const indexes = ['node', 'digital_ocean'].map((adapter) => ({
+  input: `src/index_${adapter}.js`,
+  output: {
+    file: `files/index_${adapter}.js`,
+    format: 'esm'
   },
+  plugins: [nodeResolve({ preferBuiltins: true }), commonjs(), json()],
+  external: ['ENV', 'HANDLER', ...builtinModules]
+}))
+
+export default [
+  ...indexes,
   {
     input: 'src/env.js',
     output: {
