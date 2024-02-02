@@ -2,10 +2,23 @@
   "name": "@altalune/svelte-adapter-serverless",
   "version": "0.1.3",
   "description": "Adapter for SvelteKit apps that generates a serverless handler",
+  "keywords": [
+    "svelte",
+    "sveltekit",
+    "sveltekit-adapter",
+    "ssr",
+    "adapter",
+    "serverless"
+  ],
+  "author": {
+    "name": "Hirzi Nurfakhrian",
+    "email": "hirzinurfakhrian@gmail.com"
+  },
   "repository": {
     "type": "git",
     "url": "https://github.com/hrz8/svelte-adapter-serverless"
   },
+  "homepage": "https://github.com/hrz8/svelte-adapter-serverless#readme",
   "engines": {
     "node": ">=20.0.0"
   },
@@ -18,6 +31,7 @@
     },
     "./package.json": "./package.json"
   },
+  "main": "index.js",
   "types": "index.d.ts",
   "files": [
     "files",
@@ -29,14 +43,15 @@
     "build": "node -e \"fs.rmSync('files', { force: true, recursive: true })\" && rollup -c"
   },
   "devDependencies": {
+    "@h4ad/serverless-adapter": "^4.2.0",
     "@polka/url": "1.0.0-next.24",
     "@sveltejs/kit": "^2.5.0",
     "@types/node": "^18.19.3",
     "polka": "1.0.0-next.24",
     "sirv": "^2.0.4",
+    "svelte": "^4.2.9",
     "typescript": "^5.3.3",
-		"svelte": "^4.2.9",
-		"vite": "^5.0.12"
+    "vite": "^5.0.12"
   },
   "dependencies": {
     "@rollup/plugin-commonjs": "^25.0.7",
@@ -46,7 +61,7 @@
   },
   "peerDependencies": {
     "@sveltejs/kit": "^2.5.0",
-		"svelte": "^4.2.9",
-		"vite": "^5.0.12"
+    "svelte": "^4.2.9",
+    "vite": "^5.0.12"
   }
 }

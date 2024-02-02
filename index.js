@@ -1,4 +1,5 @@
-import { readFileSync, writeFileSync } from 'node:fs';
+import { join } from 'node:path';
+import { readFileSync, writeFileSync, renameSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { rollup } from 'rollup';
 import { nodeResolve } from '@rollup/plugin-node-resolve';
@@ -9,13 +10,13 @@ const files = fileURLToPath(new URL('./files', import.meta.url).href);
 
 /** @type {import('./index.js').default} */
 export default function (opts = {}) {
-  const { out = 'build', precompress, envPrefix = '' } = opts;
+  const { out = 'build', precompress, envPrefix = '', serverlessAdapter = 'node' } = opts;
 
   return {
     name: '@altalune/svelte-adapter-serverless',
 
     async adapt(builder) {
-      const tmp = builder.getBuildDirectory('adapter-node');
+      const tmp = builder.getBuildDirectory('adapter-serverless');
 
       builder.rimraf(out);
       builder.rimraf(tmp);
@@ -79,7 +80,17 @@ export default function (opts = {}) {
         chunkFileNames: 'chunks/[name]-[hash].js'
       });
 
+      // Copy files to outDir
       builder.copy(files, out, {
+        filter: (basename) => {
+          return [
+            'files',
+            'env.js',
+            'handler.js',
+            'shims.js',
+            `index_${serverlessAdapter}.js`,
+          ].includes(basename);
+        },
         replace: {
           ENV: './env.js',
           HANDLER: './handler.js',
@@ -89,6 +100,12 @@ export default function (opts = {}) {
           ENV_PREFIX: JSON.stringify(envPrefix)
         }
       });
+
+      // Renaming the index.js as function entrypoint
+      const sourcePath = join(process.cwd(), out, `index_${serverlessAdapter}.js`);
+      const destinationPath = join(process.cwd(), out, 'index.js');
+
+      renameSync(sourcePath, destinationPath);
     },
 
     supports: {
