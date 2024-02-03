@@ -1,10 +1,10 @@
 import { handler } from 'HANDLER';
 import polka from 'polka';
-import { ServerlessAdapter } from '@h4ad/serverless-adapter';
-import { PolkaFramework } from '@h4ad/serverless-adapter/frameworks/polka';
-import { DigitalOceanHandler } from '@h4ad/serverless-adapter/handlers/digital-ocean';
-import { PromiseResolver } from '@h4ad/serverless-adapter/resolvers/promise';
-import { HttpFunctionAdapter } from '@h4ad/serverless-adapter/adapters/digital-ocean';
+import { ServerlessAdapter } from '@altalune/serverless-adapter';
+import { PolkaFramework } from '@altalune/serverless-adapter/frameworks/polka';
+import { DigitalOceanHandler } from '@altalune/serverless-adapter/handlers/digital-ocean';
+import { PromiseResolver } from '@altalune/serverless-adapter/resolvers/promise';
+import { HttpFunctionAdapter } from '@altalune/serverless-adapter/adapters/digital-ocean';
 
 const server = polka().use(handler);
 

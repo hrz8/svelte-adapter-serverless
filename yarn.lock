@@ -2,6 +2,11 @@
 # yarn lockfile v1
 
 
+"@altalune/serverless-adapter@^4.3.0":
+  version "4.3.0"
+  resolved "https://registry.yarnpkg.com/@altalune/serverless-adapter/-/serverless-adapter-4.3.0.tgz#27c42b09b08ac6074cd2680329dc56e7561e9aa8"
+  integrity sha512-bghHSF8HNa2DPEWwKVmCaXlDm1qXQoZEN6goFCuzUu0JPa2PUR4wX06kKbWTF9JFGqWbDaL1OMlNkHQZlaqnsA==
+
 "@ampproject/remapping@^2.2.1":
   version "2.2.1"
   resolved "https://registry.yarnpkg.com/@ampproject/remapping/-/remapping-2.2.1.tgz#99e8e11851128b8702cd57c33684f1d0f260b630"
@@ -124,11 +129,6 @@
   version "0.19.12"
   resolved "https://registry.yarnpkg.com/@esbuild/win32-x64/-/win32-x64-0.19.12.tgz#c57c8afbb4054a3ab8317591a0b7320360b444ae"
   integrity sha512-T1QyPSDCyMXaO3pzBkF96E8xMkiRYbUEZADd29SyPGabqxMViNoii+NcK7eWJAEoU6RZyEm5lVSIjTmcdoB9HA==
-
-"@h4ad/serverless-adapter@^4.2.0":
-  version "4.2.0"
-  resolved "https://registry.yarnpkg.com/@h4ad/serverless-adapter/-/serverless-adapter-4.2.0.tgz#25a88183c1811438a2fb922349a7bfa8e1afa3af"
-  integrity sha512-TI9vsdhS+6kbfHq+FUu5sP/QjTVsGtE/aMmIIY+7510OHNJCQ9Bo9N+6eLGLfhrMMrWboAedmZoz49NBKpnzaQ==
 
 "@jridgewell/gen-mapping@^0.3.0":
   version "0.3.3"
